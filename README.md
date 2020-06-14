@@ -1,7 +1,7 @@
 ## Description
 
 This study focuses on detecting macrophage differentiation states (noted as M1, M2 and TAM) by applying a Boolean model on 
-a literature and data-driven regulatory network. We organize the work into 4 main steps:\
+a literature and data-driven regulatory network. We organize the work into 4 main steps:
 1. Literature and data-driven network inference
 2. Boolean model and phenotype (M1, M2, TAM) categorization through unsupervised clustering algorithms
 3. Robustness and perturation analysis on the Boolean model

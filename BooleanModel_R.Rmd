@@ -159,7 +159,7 @@ jac_dist <- dist(attr_frame_matrix, attr_frame_matrix, method = "Jaccard")
 The matrix of the distances between $572$ attractors we obtained following the commands above is as follows
 ```{r}
 m <- matrix(jac_dist, nrow = length(attr$attractors))
-plot(m, breaks = NULL, col = hcl.colors(20, palette = "PRGn"), border = NA, key = list(side = 4, cex.axis = 1.75), main = "Jaccard-Needham distance matrix")
+plot(m, breaks = NULL, col = hcl.colors(20, palette = "PRGn"), border = NA, key = list(side = 4, cex.axis = 0.75), main = "Jaccard-Needham distance matrix", las = 2)
 ```
 
 Next, we plot the heatmap of the distance matrix. What we expect to find is that attractors corresponding the same phenotype will have the smallest distance amongst them. Consenquently, we expect to detect a cluster for each phenotype (4 clusters)
@@ -169,7 +169,7 @@ cn <- paste("Attr", 1:length(attr$attractors), sep = "")
 rn <- paste("Attr", 1:length(attr$attractors), sep = "")
 colnames(matrica) <- cn
 rownames(matrica) <- rn
-h <- pheatmap(matrica, border = NA, col = hcl.colors(20, palette = "PRGn"), cutree_rows = 3, show_colnames = T,show_rownames = F, fontsize = 3)
+h <- pheatmap(matrica, border = NA, col = hcl.colors(20, palette = "PRGn"), cutree_rows = 3, show_colnames = T,show_rownames = F, fontsize = 3, las = 2)
 ```
 
 To have a deeper look at the attrators corresponding to each cluster, we plot the clusters separately, running the following commands
@@ -180,13 +180,13 @@ colnames(Clust_frame) <- c("Cluster", "Attr")
 Clust_frame_attr <- merge(Clust_frame, attr_frame_t, by = intersect(names(Clust_frame), names(attr_frame_t)))
 
 Clust1 <- Clust_frame_attr %>% filter(Cluster == 1)
-plot(as.matrix(Clust1[3:length(mono_rules$genes)]), main = "Cluster 1", xlab = "Genes", ylab = "Attractors")
+plot(as.matrix(Clust1[3:length(mono_rules$genes)]), main = "Cluster 1", xlab = "Genes", ylab = "Attractors", cex.axis = 0.5, cex.main = 0.75, cex.lab = 0.75, las = 2)
 Clust2 <- Clust_frame_attr %>% filter(Cluster == 2)
-plot(as.matrix(Clust2[3:length(mono_rules$genes)]), main = "Cluster 2", xlab = "Genes", ylab = "Attractors")
+plot(as.matrix(Clust2[3:length(mono_rules$genes)]), main = "Cluster 2", xlab = "Genes", ylab = "Attractors", cex.axis = 0.5, cex.main = 0.75, cex.lab = 0.75, las = 2)
 Clust3 <- Clust_frame_attr %>% filter(Cluster == 3)
-plot(as.matrix(Clust3[3:length(mono_rules$genes)]), main = "Cluster 3", xlab = "Genes", ylab = "Attractors")
+plot(as.matrix(Clust3[3:length(mono_rules$genes)]), main = "Cluster 3", xlab = "Genes", ylab = "Attractors", cex.axis = 0.5, cex.main = 0.75, cex.lab = 0.75, las = 2)
 Clust4 <- Clust_frame_attr %>% filter(Cluster == 4)
-plot(as.matrix(Clust4[3:length(mono_rules$genes)]), main = "Cluster 4", xlab = "Genes", ylab = "Attractors")
+plot(as.matrix(Clust4[3:length(mono_rules$genes)]), main = "Cluster 4", xlab = "Genes", ylab = "Attractors", cex.axis = 0.5, cex.main = 0.75, cex.lab = 0.75, las = 2)
 ```
 
 But, what is true number of clusters? Ie, what is the optimal number of cluster we detect in the distance matrix? To answer this, we apply the __elbow method__. Running the following commands, we plot of score as a function of the number of clusters $k$. The optimal number of clusters will be the value of $k$ in which we observe the "elbow".\

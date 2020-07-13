@@ -39,7 +39,7 @@ library(cluster)
 The next commands upload the Boolean rules and construct the interaction network between components. It should be noted though that the network reprentation does not show the inhibitory relatioships.
 
 ```{r}
-mono_rules <- loadNetwork("rules_modified.txt")
+mono_rules <- loadNetwork("rules.txt")
 plotNetworkWiring(mono_rules)  # to plot the network
 ```
 

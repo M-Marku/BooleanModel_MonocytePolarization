@@ -19,7 +19,8 @@ library(xlsx)
 
 # 1. Load the Boolean model from your file
 mono_rules <- loadNetwork("rules_extended.txt")
-# plotNetworkWiring(mono_rules)  # to plot the network
+saveNetwork(mono_rules,file = "mono_Bmodel.net") #save the Boolean netwrok in a bnet file
+#plotNetworkWiring(mono_rules)  # to plot the network
 
 # 2. Get the attractors
 # Method 1: get all the possible attractors, starting from every possible initial condition
@@ -49,18 +50,25 @@ Sig_M2_Matrix <- plotAttractors(Sig_M2, borderColor = NA, main = "Fixed point at
 
 # Knock-outs
 KO <- getAttractors(mono_rules, method = "sat.restricted",maxAttractorLength = 1,
-                    genesOFF = c("STAT3")) # here STAT3 is chosen to be turned OFF
+                    genesOFF = c("IRF4")) # here STAT3 is chosen to be turned OFF
 KO_Matrix <- plotAttractors(KO, borderColor = NA, main = "Fixed point attractors")
+
+# Overexpression
+OE <- getAttractors(mono_rules, method = "sat.restricted",maxAttractorLength = 1,
+                    genesON = c("STAT3")) # here STAT3 is chosen to be turned OFF
+OE_Matrix <- plotAttractors(OE, borderColor = NA, main = "Fixed point attractors")
 
 #########################
 
 # Remove the inputs from attractors
-inputnames <- c("IFNG", "GMCSF", "IL1", "LPS", "IC", "IL4", "IL10", "CSF1", "IL13", "HMGB1")
+inputnames <- c("IFNG", "GMCSF", "IL1", "LPS", "IC", "IL4", "IL10", "MCSF", "IL13", "HMGB1")
 Rem_inputs <- Attr_Matrix$`1`[!rownames(Attr_Matrix$`1`) %in% inputnames, ]
 outputnames <- c("M1", "M2", "TAM")
 Rem_outs <- Rem_inputs[!rownames(Rem_inputs) %in% outputnames, ]
 
 # Detect and remove the dublicates
+# The analysis will be based on the expression of intracellular components, 
+
 Rem_inputs_df <- as.data.frame(Rem_inputs)
 Rem_dubs <- Rem_inputs_df[!duplicated(lapply(Rem_inputs_df, digest))]
 Attr_sorted <- Rem_dubs[ order(row.names(Rem_dubs)), ]
@@ -83,22 +91,28 @@ attr_frame_t_bool <- attr_frame_t_numeric %>% mutate_all(funs(as.logical(.)))
 attr_frame_t_bool$Attr <- attr_frame_t$Attr
 attr_frame_t_bool %<>% select(Attr,everything())
 
-# Detect phenotype categories
+# 2.2.Detect phenotype categories
+# M0 category
 m_0 <- attr_frame_t_bool %>% filter(!xor(M1,M2))
 m0_num <- m_0 %>% select(-1) %>% mutate_all(funs(as.numeric(.)))
-rownames(m0_num) <- m_0$Attr
-m0_num_order <- m0_num[order(names(m0_num))]
+m0_bio <- m0_num[- c(32, 33),]
+rownames(m0_bio) <- m_0$Attr
+m0_num_order <- m0_bio[order(names(m0_bio))]
 m0_num_order$M1 <- NULL
 m0_num_order$M2 <- NULL
 m0_num_order$TAM <- NULL
 m0_num_order$phenotype <- NULL
 m0_mat <- as.matrix(m0_num_order)
+rownames(m0_mat) <- m_0$Attr
 write.xlsx(t(m0_mat), "M0_category.xlsx", row.names = T, col.names = T)
 plot(m0_mat, las=2, xlab=NA, ylab=NA, main = "M0 attractors")
 m0_means <- as.matrix(colMeans(m0_mat))
 write.xlsx(m0_means, "M0_category.xlsx", row.names = T, col.names = T)
 barplot(t(m0_means), las = 2, main = "Averaged expression profile of M0 attractors", col = "#67B0D0")
+m0_sub_cat <- pheatmap(m0_mat, border = NA, color = c("#F94545", "#67C170"), cutree_rows = 2,
+                       show_colnames = T,show_rownames = F, fontsize = 8, main = "M0 subcategories")
 
+# M1 category
 m_1 <- attr_frame_t_bool %>% filter(M1)
 m1_num <- m_1 %>% select(-1) %>% mutate_all(funs(as.numeric(.)))
 rownames(m1_num) <- m_1$Attr
@@ -108,13 +122,14 @@ m1_num_order$M2 <- NULL
 m1_num_order$TAM <- NULL
 m1_num_order$phenotype <- NULL
 m1_mat <- as.matrix(m1_num_order)
+rownames(m1_mat) <- m_1$Attr
 write.xlsx(m1_mat, "M1_category.xlsx", row.names = T, col.names = T)
 plot(t(m1_mat), las=2, xlab=NA, ylab=NA, main = "M1 attractors")
 m1_means <- as.matrix(colMeans(m1_mat))
 write.xlsx(m1_means, "M1_category.xlsx", row.names = T, col.names = T)
 barplot(t(m1_means), las = 2, main = "Averaged expression profile of M1 attractors", col = "#E9BD65")
 
-
+# M2 category
 m_2 <- attr_frame_t_bool %>% filter(M2)
 m2_num <- m_2 %>% select(-1) %>% mutate_all(funs(as.numeric(.)))
 m2_num_order <- m2_num[order(names(m2_num))]
@@ -123,12 +138,41 @@ m2_num_order$M2 <- NULL
 m2_num_order$TAM <- NULL
 m2_num_order$phenotype <- NULL
 m2_mat <- as.matrix(m2_num_order)
+rownames(m2_mat) <- m_2$Attr
 plot(m2_mat, las=2, xlab=NA, ylab=NA, main = "M2 attractors")
 m2_means <- as.matrix(colMeans(m2_mat))
 write.xlsx(m2_means, "M2_category.xlsx", row.names = T, col.names = T)
 barplot(t(m2_means), las = 2, main = "Averaged expression profile of M2 attractors", col = "#C5ABE4")
 
+# Search for M2 subcategories
+m2_sub_cat <- pheatmap(m2_mat, border = NA, color = c("#F94545", "#67C170"), 
+              cutree_rows = 4, show_colnames = T,show_rownames = F, fontsize = 8, main = "M2 subcategories")
+m2_cutree <- cutree(m2_sub_cat$tree_row, k = 4)
+m2_subclass <- as.data.frame(m2_mat)
+all(names(m2_cutree) == rownames(m2_subclass))
+m2_subclass$Clusters <- m2_cutree
 
+M2a <- m2_subclass %>% filter(Clusters == 1)
+M2a$Clusters <- NULL
+m2a_means <- as.matrix(colMeans(M2a))
+barplot(t(m2a_means), las = 2, main = "Averaged expression profile of M2 subcategory 1", col = "#C5ABE4")
+
+M2b <- m2_subclass %>% filter(Clusters == 2)
+M2b$Clusters <- NULL
+m2b_means <- as.matrix(colMeans(M2b))
+barplot(t(m2b_means), las = 2, main = "Averaged expression profile of M2 subcategory 2", col = "#C5ABE4")
+
+M2c <- m2_subclass %>% filter(Clusters == 3)
+M2c$Clusters <- NULL
+m2c_means <- as.matrix(colMeans(M2c))
+barplot(t(m2c_means), las = 2, main = "Averaged expression profile of M2 subcategory 3", col = "#C5ABE4")
+
+M2d <- m2_subclass %>% filter(Clusters == 4)
+M2d$Clusters <- NULL
+m2d_means <- as.matrix(colMeans(M2d))
+barplot(t(m2d_means), las = 2, main = "Averaged expression profile of M2 subcategory 4", col = "#C5ABE4")
+
+# TAM/NLC category
 tam <- attr_frame_t_bool %>% filter(TAM)
 tam_num <- tam %>% select(-1) %>% mutate_all(funs(as.numeric(.)))
 tam_num_order <- tam_num[order(names(tam_num))]
@@ -137,6 +181,7 @@ tam_num_order$M2 <- NULL
 tam_num_order$TAM <- NULL
 tam_num_order$phenotype <- NULL
 tam_mat <- as.matrix(tam_num_order)
+rownames(tam_mat) <- tam$Attr
 write.xlsx(t(tam_mat), "NLC_category.xlsx", row.names = T, col.names = T)
 plot(tam_mat, las=2, xlab=NA, ylab=NA, main = "TAM attractors")
 tam_means <- as.matrix(colMeans(tam_mat))
@@ -144,6 +189,7 @@ write.xlsx(tam_means, "NLC_category.xlsx", row.names = T, col.names = T)
 barplot(t(tam_means), las = 2, main = "Averaged expression profile of NLC attractors", col = "#A1AB70")
 
 
+# 2.3. Plot the heatmap
 
 attr_frame_t_bool[attr_frame_t_bool$Attr %in% m_0$Attr, 'phenotype'] <- "M0"
 attr_frame_t_bool[attr_frame_t_bool$Attr %in% m_1$Attr, 'phenotype'] <- "M1"
@@ -152,14 +198,10 @@ attr_frame_t_bool[attr_frame_t_bool$Attr %in% tam$Attr, 'phenotype'] <- "NLC"
 colors <- c("#67B0D0", "#E9BD65", "#C5ABE4", "#A1AB70")
 phenotypes <- as.factor(attr_frame_t_bool$phenotype)
 
-
-# 2.3. Plot the heatmap
 attr_frame_t_numeric <- attr_frame_t_bool %>% select(-c(Attr, phenotype)) %>% mutate_all(funs(as.numeric(.)))
-
 attr_frame_t_numeric$M1 <- NULL
 attr_frame_t_numeric$M2 <- NULL
 attr_frame_t_numeric$TAM <- NULL
-
 
 attr_frame_matrix <- as.matrix(attr_frame_t_numeric)
 rownames(attr_frame_matrix) <- attr_frame_t$Attr
@@ -170,15 +212,16 @@ rownames(phenotypes_frame) <- rownames(attr_frame_matrix)
 pheatmap(t(attr_frame_matrix), border_color = NA, color = c("#F94545", "#67C170"), 
          legend_labels = c("OFF", "ON"), legend_breaks = 0:1, 
          annotation_col = phenotypes_frame, annotation_colors = phenotype_colors, 
-         annotation_names_col = F, fontsize = 8)
+         annotation_names_col = F, fontsize = 6, rownames = F, colnames = F)
 
 
-##############
+#######################
 
-# Conctruct the pca
+# 2.4.Conctruct the pca
 
 pca <- prcomp(attr_frame_matrix)
-pca2d(pca, group = phenotypes, palette = colors, show.centroids = T, show.group.labels = T)
+ind <- get_pca_ind(pca) 
+deep_ana <- pca2d(pca, group = phenotypes, palette = colors, show.centroids = T, show.group.labels = T)
 
 
 

@@ -29,10 +29,9 @@ TNFA	, IRF5 & !(IL10s)
 TGFB	, STAT3 & (!TNFA)
 HIF1A, (STAT3 | IL10s) & (!STAT1)
 RAGE, HMGB1
+
+# Outputs 
 M1	, (STAT1 | STAT5) & IL12 & NFKB & TNFA) & !(M2 | TAM)
 M2	, (STAT6 | STAT3)  & JMJD3 & IL10s & !M1
 TAM	, (EGF & RAGE & TGFB & HIF1A) & !(M1 | M2)
-
-
-# add TNFSF12/13 (NLC or M2), RAGE (NLC), IL-6/IL-8 (NLC)
 

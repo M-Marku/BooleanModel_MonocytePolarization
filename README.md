@@ -12,7 +12,7 @@ a literature and data-driven regulatory network. We organize the work into 3 mai
 
 
 ## Code description
-The numerical simulations on the Boolean model of macrophage polarization are performed using the R library BoolNet. The R script run_macrophage.R in this repo contains all the steps of the simulations:
+The numerical simulations on the Boolean model of macrophage polarization are performed using the R library BoolNet. The R script run_macrophage_bool.R in this repo contains all the steps of the simulations:
 - Identification of all fized point attractors of the system;
 - Attractor categorization.
 - Estimation of Jaccard-Needham index and clustering.

@@ -12,3 +12,9 @@ a literature and data-driven regulatory network. We organize the work into 3 mai
 ## Full text availability
 For a full and more detailed description of the model, simulations, and other analysis, please refer to Marku et al (2020).\
 Marku, M., Verstraete, N., Raynal, F., Madrid-Mencía, M., Domagala, M., Fournié, J.J., Ysebaert, L., Poupot, M. and Pancaldi, V., 2020. Insights on TAM Formation from a Boolean Model of Macrophage Polarization Based on In Vitro Studies. Cancers, 12(12), p.3664.
+
+## Code description
+The numerical simulations on the Boolean model of macrophage polarization are performed using the R library BoolNet. The R script run_macrophage.R in this repo contains all the steps of the simulations:
+\item Identification of all fized point attractors of the system;
+\item Attractor categorization.
+\item Estimation of Jaccard-Needham index and clusting.

@@ -4,16 +4,11 @@ Many factors underlie the large variability in patients’ immune-infiltration p
 
 ## Steps
 This study focuses on detecting macrophage differentiation states (noted as M1, M2 and TAM) by applying a Boolean model on 
-a literature and data-driven regulatory network. We organize the work into 4 main steps:
-1. Literature and data-driven network inference
-2. Boolean model and phenotype (M1, M2, TAM) categorization through unsupervised clustering algorithms
-3. Robustness and perturation analysis on the Boolean model
-4. Mutations and knock-outs on network components/pathways
+a literature and data-driven regulatory network. We organize the work into 3 main steps:
+1. Building the macrophage polarization regulatory network: We start from Palma et al (2018) and we follow a literature based approach to extend the network. Microarray data were used to perform TF estimation and gene expression analysis to validate the extension.
+2. Studying the dynamical behaviour of the regulatory system: We build a Boolean model to study the system behaviour and identify the main macrophage states (noted M1, M2 and NLC/TAM), by performing a supervised (literature based) and unsupervised (clustering the attractors according to their Jaccard index) method. 
+3. Model validation: We perform several simulations mimicking knock-out experiments and different extracellular environments to validate the accurancy of the model. 
 
-## Literature
-1. Palma, A., Jarrah, A. S., Tieri, P., Cesareni, G., & Castiglione, F. (2018). 
-Gene regulatory network modeling of macrophage differentiation corroborates the continuum hypothesis of polarization states. 
-Frontiers in Physiology, 9(November), 1–19. https://doi.org/10.3389/fphys.2018.01659
-2. Mantovani, A., Sica, A., & Locati, M. (2005). 
-Macrophage polarization comes of age. 
-Immunity, 23(4), 344–346. https://doi.org/10.1016/j.immuni.2005.10.001
+## Full text availability
+For a full and more detailed description of the model, simulations, and other analysis, please refer to Marku et al (2020).\
+Marku, M., Verstraete, N., Raynal, F., Madrid-Mencía, M., Domagala, M., Fournié, J.J., Ysebaert, L., Poupot, M. and Pancaldi, V., 2020. Insights on TAM Formation from a Boolean Model of Macrophage Polarization Based on In Vitro Studies. Cancers, 12(12), p.3664.

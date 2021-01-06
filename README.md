@@ -15,6 +15,6 @@ Marku, M., Verstraete, N., Raynal, F., Madrid-Menc√≠a, M., Domagala, M., Fourni√
 
 ## Code description
 The numerical simulations on the Boolean model of macrophage polarization are performed using the R library BoolNet. The R script run_macrophage.R in this repo contains all the steps of the simulations:
-\item Identification of all fized point attractors of the system;
-\item Attractor categorization.
-\item Estimation of Jaccard-Needham index and clusting.
+- Identification of all fized point attractors of the system;
+- Attractor categorization.
+- Estimation of Jaccard-Needham index and clusting.
